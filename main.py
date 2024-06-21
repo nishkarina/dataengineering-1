@@ -5,9 +5,9 @@ from playwright.async_api import async_playwright
 import re
 
 
-SBR_WS_CDP = 'You credentials of Bright Data'
+SBR_WS_CDP = 'You creds from Bright Data'
 BASE_URL = "https://zoopla.co.uk"
-LOCATION = "London"
+LOCATION = "Oxfordshire"
 
 def extract_picture(picture_section):
     picture_sources = []
@@ -19,6 +19,7 @@ def extract_picture(picture_section):
             if source_type == "webp" and '1024' in pic_url:
                 picture_sources.append(pic_url)
     return picture_sources
+
 
 def extract_property_details(main_div):
     details = {}
@@ -37,22 +38,6 @@ def extract_property_details(main_div):
         details["Price"] = price_value
     else:
         details["Price"] = "Unknown"
-
-    # Extract Title
-    title_div = main_div.find('p', class_='_194zg6t7 _18cwln11', attrs={'data-testid': 'title-label'})
-    if title_div:
-        title_value = title_div.text.strip()
-        details["Title"] = title_value
-    else:
-        details["Title"] = "Unknown"
-
-    # Extract Address
-    address_div = main_div.find('address', class_='_18cwln12 _194zg6t8', attrs={'data-testid': 'address-label'})
-    if address_div:
-        address_value = address_div.text.strip()
-        details["Address"] = address_value
-    else:
-        details["Address"] = "Unknown"
 
     # Initialize variables for bedrooms, bathrooms, and reception
     bedrooms = None
@@ -90,14 +75,14 @@ def extract_property_details(main_div):
     details["Bathrooms"] = bathrooms if bathrooms else "Unknown"
     details["Reception"] = reception if reception else "Unknown"
 
-    return json.dumps(details)
-    
+    return details
+ 
 
 
 def extract_floor_plan(soup):
     print("Extract floor plan..")
     plan = {}
-    floor_plan = soup.find(name = 'div', attribute={"data-testid":"floorplan-thumbnail-0"})
+    floor_plan = soup.find(name = 'div', attrs={"data-testid":"floorplan-thumbnail-0"})
     if floor_plan:
         floor_plan_src = floor_plan.find('picture').find('source')['srcset']
         plan['floor_plan'] = floor_plan_src.split(' ')[0]

@@ -1,3 +1,2 @@
 playwright
-re
-bs4
+beautifulsoup4
